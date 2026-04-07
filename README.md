@@ -5,7 +5,7 @@ Modern, sophisticated malware rarely exposes its full capabilities in a single e
 
 The important part of this is that most if not all of these environmental checks happen through API calls. If we control what those API calls return (API hooking), we control the malware's perception of its "environment".  API hooking allows us to simulate different environments without reconfiguring the VM between iterations, drastically reducing per-run overhead.  Through this medium I think we can fuzz the environment itself with an RL agent to ask the question: 
 
->**Can we use Reinforcement Learning (RL) guided, environmental fuzzing on the API interposition layer to discover execution paths that only trigger in certain circumstances?**
+- **Can we use Reinforcement Learning (RL) guided, environmental fuzzing on the API interposition layer to discover execution paths that only trigger in certain circumstances?**
 # The Gap
 RL-guided fuzzing is a well-explored topic in the software vulnerability discovery field, where fuzzing is of interest. The only work that I have found to explore my specific application, however, is Pfuzzer (EuroS&P 2025). They proved the concept of a coverage-guided fuzzer over environmental configurations via API hooking successfully finds hidden malware behaviors... but it has a few concrete limitations:
 
