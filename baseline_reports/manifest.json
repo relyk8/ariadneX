@@ -1,0 +1,42 @@
+{
+  "7z.exe": {
+    "path": "corpus\\7z.exe",
+    "task_id": 4,
+    "report": "baseline_reports\\7z.json"
+  },
+  "keepass.exe": {
+    "path": "corpus\\keepass.exe",
+    "task_id": 5,
+    "report": "baseline_reports\\keepass.json"
+  },
+  "notepad++.exe": {
+    "path": "corpus\\notepad++.exe",
+    "task_id": 6,
+    "report": "baseline_reports\\notepad++.json"
+  },
+  "processhacker.exe": {
+    "path": "corpus\\processhacker.exe",
+    "task_id": 7,
+    "report": "baseline_reports\\processhacker.json"
+  },
+  "putty.exe": {
+    "path": "corpus\\putty.exe",
+    "task_id": 8,
+    "report": "baseline_reports\\putty.json"
+  },
+  "sumatrapdf.exe": {
+    "path": "corpus\\sumatrapdf.exe",
+    "task_id": 9,
+    "report": "baseline_reports\\sumatrapdf.json"
+  },
+  "vlc.exe": {
+    "path": "corpus\\vlc.exe",
+    "task_id": 10,
+    "report": "baseline_reports\\vlc.json"
+  },
+  "winmerge.exe": {
+    "path": "corpus\\winmerge.exe",
+    "task_id": 11,
+    "report": "baseline_reports\\winmerge.json"
+  }
+}
