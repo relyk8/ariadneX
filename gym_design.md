@@ -257,6 +257,33 @@ Does not prove: the agent has learned anything. Meaningful convergence needs 100
 
 ---
 
+## Post-step-6 — Stable baseline (completed)
+
+### What we did
+
+During step 5 validation, the forced-signal sanity check on notepad++ returned zero reward despite having produced +80 IoCs in an earlier step 4 run. Re-running step 4's mutation_poc produced a baseline with 117 APIs / 40 mutexes and a mutated run with 92 APIs / 6 mutexes — the mutated run was *quieter* than the baseline, the opposite of what `full-logs=1` should do.
+
+Diagnosis: notepad++ is bimodal. It runs either "loud" (pulls in WMI driver registration, Explorer thumbnail cache maintenance, ~115 APIs) or "quiet" (~92 APIs), and which mode happens is essentially a coin flip depending on VM ambient state at detonation time. Its run-to-run drift (~25 APIs, ~34 mutexes) exceeds the signal we care about measuring (~25 novel APIs from `full-logs=1`). A single-shot baseline is therefore unreliable as a novelty reference.
+
+### Fix
+
+Wrote `build_stable_baseline.py`: detonates a binary N times (default 5) with default options, tracks per-item appearance counts, splits results into:
+
+- **persistent set**: items appearing in ≥80% of runs — the stable behavioral fingerprint
+- **volatile set**: items appearing in some but not all runs — ambient noise
+
+Added `noise_filtered_novelty(persistent, volatile, mutated)` to `novelty.py`: an item counts as novel only if it was in *neither* the persistent nor volatile set. Updated `AriadneEnv` to prefer `<binary>.stable.json` when present and fall back to the single-shot `<binary>.json` when it isn't.
+
+### Impact
+
+The single-shot baselines remain useful as a fast first-pass reference but should be replaced by stable baselines for any binary where run-to-run drift exceeds ~5 APIs. In practice, this means every binary heavier than putty or 7z. The `.stable.json` files live alongside the single-shot `.json` files in `baseline_reports/`, and the env auto-picks the stable version when it exists.
+
+### Moved from "future scope" to done
+
+The thesis-phase item "average baseline across N detonations, intersect the sets" is now partially built. What remains as future work is dynamic per-run recalibration — currently the stable baseline is fixed when `build_stable_baseline.py` runs; a more sophisticated version would continuously update the volatile set from observed noise during training.
+
+---
+
 ## Open questions and future scope
 
 ### Near-term (before DefCon)

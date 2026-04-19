@@ -85,3 +85,39 @@ def novel_items(baseline: dict[str, set[str]],
     """Same as novelty_score but returns the actual novel elements.
     Useful for debugging / inspecting *what* is new, not just how many."""
     return {k: mutated[k] - baseline[k] for k in baseline}
+
+
+def load_stable_baseline(path) -> tuple[dict[str, set[str]], dict[str, set[str]]]:
+    """Load a .stable.json produced by build_stable_baseline.py.
+
+    Returns (persistent, volatile) as dicts of sets.
+    """
+    import json
+    from pathlib import Path
+    data = json.loads(Path(path).read_text())
+    persistent = {k: set(v) for k, v in data["persistent"].items()}
+    volatile = {k: set(v) for k, v in data["volatile"].items()}
+    # Ensure all IOC_CATEGORIES keys exist even if empty
+    for cat in IOC_CATEGORIES:
+        persistent.setdefault(cat, set())
+        volatile.setdefault(cat, set())
+    return persistent, volatile
+
+
+def noise_filtered_novelty(persistent: dict[str, set[str]],
+                           volatile: dict[str, set[str]],
+                           mutated: dict[str, set[str]]) -> dict[str, int]:
+    """Count items novel vs persistent baseline AND not already seen as volatile.
+
+    persistent: items reliably present across baseline runs
+    volatile:   items that appear in some baseline runs but not all (noise)
+    mutated:    items from the mutated run under test
+
+    An item counts as novel only if it was in neither set — genuinely new
+    behavior surfaced by the mutation, not ambient Windows drift.
+    """
+    out = {}
+    for k in persistent:
+        known = persistent[k] | volatile[k]
+        out[k] = len(mutated[k] - known)
+    return out
